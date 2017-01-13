@@ -1,0 +1,83 @@
+#! /usr/bin/env python
+#code takes pseudo atoms, force field def, force field mixing rules, the relevant cif, and molecule definition files and copy them into directories created for each pressure the user wants to run for the isotherm. Writes the job.pbs and simulation.input files. Submits the jobs.
+
+import subprocess
+import time
+import readline
+import numpy as np
+import math
+
+#get maximum pressure and the temperature of the isotherm
+temp = raw_input('At what temperature should this isotherm be run? (K)\n') + '.0'
+maxPressure = raw_input('What is the maximum pressure of the isotherm? (mbar)\n')
+
+#create the pressure directories, and copy the files to them, then write the simulation.input and job.pbs files
+pressures = np.linspace(100,int(maxPressure),num=12,endpoint=True)
+getDir = subprocess.Popen('pwd', stdout=subprocess.PIPE)
+location = getDir.communicate()[0].split()
+
+#get the name of the cif file
+cifFile = subprocess.Popen('ls *.cif', stdout=subprocess.PIPE, cwd=str(location[0]), shell=True)
+cif = str(str(cifFile.communicate()[0].split()[0]).rsplit('.cif')[0])
+
+#identify the molecule file in the directory
+molecule = subprocess.Popen('bash -O extglob -c "ls !(+(force_field|pseudo)*) | grep "def""', stdout=subprocess.PIPE, cwd=str(location[0]), shell=True)
+mol = str(str(molecule.communicate()[0].split()[0])).replace(".def","")
+
+#make the head directory
+head = cif.rsplit('_')[0]+'_'+mol+'_'+temp.rsplit('.')[0]+'K_DDEC6_UFF'
+headDir = subprocess.Popen('mkdir {0}'.format(head), shell=True)
+time.sleep(1)
+
+for pressure in pressures:
+    P = int(round(pressure/100)*100)
+    fil = str(location[0]) + '/' + head + '/' + str(P) + 'mbar'
+    createDir = subprocess.Popen('mkdir {0}'.format(fil), stdout=subprocess.PIPE, shell=True)
+    #copy the necessary to each directory
+    time.sleep(1)
+    copyfile = subprocess.Popen('cp *.def {0}'.format(fil), shell=True)
+    copyfile2 = subprocess.Popen('cp *.cif {0}'.format(fil), shell=True)
+    #write the simulation.input file
+    inputFile = open('{0}/simulation.input'.format(fil), 'w')
+    inputFile.write('SimulationType\tMonteCarlo\n')
+    inputFile.write('NumberOfCycles\t30000\n')
+    inputFile.write('NumberOfInitializationCycles\t3000\n')
+    inputFile.write('PrintEvery\t100\n\n')
+    inputFile.write('ChargeMethod\tEwald\n')
+    inputFile.write('OmitInterMolecularInteractions\tno\n')
+    inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tno\n')
+    inputFile.write('OmitAdsorbateAdsorbateCoulombInteractions\tno\n\n')
+    inputFile.write('UseChargesFromCIFFile\tyes\n')
+    inputFile.write('Forcefield\tGenericMOFs\n\n')
+    inputFile.write('Framework\t0\n')
+    inputFile.write('FrameworkName\t{0}\n'.format(cif))
+    inputFile.write('UnitCells 2 2 2\n')
+    inputFile.write('ExternalTemperature\t{0}\n'.format(temp))
+    inputFile.write('ExternalPressure\t{0}\n\n'.format(str(P)+'.0'))
+    inputFile.write('Component 0 MoleculeName\t{0}\n'.format(mol))
+    inputFile.write('\tMoleculeDefinition\tTraPPE\n')
+    inputFile.write('\tTranslationProbability\t0.5\n')
+    inputFile.write('\tRotationProbability\t0.5\n')
+    inputFile.write('\tReinsertionProbability\t0.0\n')
+    inputFile.write('\tSwapProbability\t1.0\n')
+    inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
+    inputFile.close()
+    #make the jobfile
+    jobfile = open('{0}/job.pbs'.format(fil), 'w')
+    jobfile.write('#!/bin/bash\n\n')
+    jobfile.write('#PBS -N {0}\n'.format(cif.rsplit("_",1)[0]+'_'+str(P)+'mbar'))
+    jobfile.write('#PBS -r n\n')
+    jobfile.write('#PBS -j oe\n')
+    jobfile.write('#PBS -q ib\n')
+    jobfile.write('#PBS -l nodes=1:ppn=1\n')
+    jobfile.write('#PBS -l walltime=72:00:00\n\n')
+    jobfile.write('cd $PBS_O_WORKDIR\n')
+    jobfile.write('module load raspa2/gcc-5.2.0\n\n')
+    jobfile.write('simulate simulation.input\n')
+    jobfile.write('exit 0')
+    jobfile.close()
+    job = subprocess.Popen('qsub job.pbs', stdout=subprocess.PIPE, cwd=fil, shell=True)
+    print('{0} {1}'.format(str(job.communicate()[0].split()).rsplit('.')[0].replace("['",""),str(P)+'mbar'))
+
+cleanup = subprocess.Popen('rm *def *cif', shell=True)
+
