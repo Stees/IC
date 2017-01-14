@@ -53,7 +53,7 @@ for pressure in pressures:
     inputFile.write('FrameworkName\t{0}\n'.format(cif))
     inputFile.write('UnitCells 2 2 2\n')
     inputFile.write('ExternalTemperature\t{0}\n'.format(temp))
-    inputFile.write('ExternalPressure\t{0}\n\n'.format(str(P)+'.0'))
+    inputFile.write('ExternalPressure\t{0}\n\n'.format(str(P*100)+'.0'))
     inputFile.write('Component 0 MoleculeName\t{0}\n'.format(mol))
     inputFile.write('\tMoleculeDefinition\tTraPPE\n')
     inputFile.write('\tTranslationProbability\t0.5\n')
