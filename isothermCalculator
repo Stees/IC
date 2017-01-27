@@ -9,10 +9,20 @@ import math
 
 #get maximum pressure and the temperature of the isotherm
 temp = raw_input('At what temperature should this isotherm be run? (K)\n') + '.0'
-maxPressure = raw_input('What is the maximum pressure of the isotherm? (mbar)\n')
-
+maxPressure = float(raw_input('What is the maximum pressure of the isotherm? (mbar)\n'))
+voidFraction = 2.0
+while (voidFraction > 1.0 or voidFraction < 0.0):
+    if (voidFraction != 2):
+        print('Likely invalid entry. Try again.\n')
+    voidFraction = float(raw_input('Enter the He void fraction of the MOF.\n'))
 #create the pressure directories, and copy the files to them, then write the simulation.input and job.pbs files
-pressures = np.linspace(100,int(maxPressure),num=12,endpoint=True)
+pressures = np.linspace(100,maxPressure,num=12,endpoint=True)
+Pressures = np.array([])
+for pres in pressures:
+    P = int(round(pres/100)*100)
+    Pressures = np.append(Pressures, P)
+Pressures = np.unique(np.append(Pressures, maxPressure))
+
 getDir = subprocess.Popen('pwd', stdout=subprocess.PIPE)
 location = getDir.communicate()[0].split()
 
@@ -29,9 +39,8 @@ head = cif.rsplit('_')[0]+'_'+mol+'_'+temp.rsplit('.')[0]+'K_DDEC6_UFF'
 headDir = subprocess.Popen('mkdir {0}'.format(head), shell=True)
 time.sleep(1)
 
-for pressure in pressures:
-    P = int(round(pressure/100)*100)
-    fil = str(location[0]) + '/' + head + '/' + str(P) + 'mbar'
+for pressure in Pressures:
+    fil = str(location[0]) + '/' + head + '/' + str(pressure) + 'mbar'
     createDir = subprocess.Popen('mkdir {0}'.format(fil), stdout=subprocess.PIPE, shell=True)
     #copy the necessary to each directory
     time.sleep(1)
@@ -44,6 +53,7 @@ for pressure in pressures:
     inputFile.write('NumberOfInitializationCycles\t3000\n')
     inputFile.write('PrintEvery\t100\n\n')
     inputFile.write('ChargeMethod\tEwald\n')
+    inputFile.write('Cutoff\t14.0\n')
     inputFile.write('OmitInterMolecularInteractions\tno\n')
     inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tno\n')
     inputFile.write('OmitAdsorbateAdsorbateCoulombInteractions\tno\n\n')
@@ -52,6 +62,7 @@ for pressure in pressures:
     inputFile.write('Framework\t0\n')
     inputFile.write('FrameworkName\t{0}\n'.format(cif))
     inputFile.write('UnitCells 2 2 2\n')
+    inputFile.write('HeliumVoidFraction\t{0}'.format(
     inputFile.write('ExternalTemperature\t{0}\n'.format(temp))
     inputFile.write('ExternalPressure\t{0}\n\n'.format(str(P*100)+'.0'))
     inputFile.write('Component 0 MoleculeName\t{0}\n'.format(mol))
