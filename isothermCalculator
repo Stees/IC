@@ -62,7 +62,7 @@ for pressure in Pressures:
     inputFile.write('Framework\t0\n')
     inputFile.write('FrameworkName\t{0}\n'.format(cif))
     inputFile.write('UnitCells 2 2 2\n')
-    inputFile.write('HeliumVoidFraction\t{0}'.format(
+    inputFile.write('HeliumVoidFraction\t{0}'.format(voidFraction))
     inputFile.write('ExternalTemperature\t{0}\n'.format(temp))
     inputFile.write('ExternalPressure\t{0}\n\n'.format(str(P*100)+'.0'))
     inputFile.write('Component 0 MoleculeName\t{0}\n'.format(mol))
