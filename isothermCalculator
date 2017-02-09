@@ -53,7 +53,7 @@ for pressure in Pressures:
     inputFile.write('NumberOfInitializationCycles\t3000\n')
     inputFile.write('PrintEvery\t100\n\n')
     inputFile.write('ChargeMethod\tEwald\n')
-    inputFile.write('Cutoff\t14.0\n')
+ #   inputFile.write('Cutoff\t14.0\n')
     inputFile.write('OmitInterMolecularInteractions\tno\n')
     inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tno\n')
     inputFile.write('OmitAdsorbateAdsorbateCoulombInteractions\tno\n\n')
