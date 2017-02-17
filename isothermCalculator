@@ -15,14 +15,13 @@ while (voidFraction > 1.0 or voidFraction < 0.0):
     if (voidFraction != 2):
         print('Likely invalid entry. Try again.\n')
     voidFraction = float(raw_input('Enter the He void fraction of the MOF.\n'))
+print('\n\nCalculations:\n')
 #create the pressure directories, and copy the files to them, then write the simulation.input and job.pbs files
-pressures = np.linspace(100,maxPressure,num=12,endpoint=True)
+pressures = np.linspace(0,1,num=20,endpoint=False)
 Pressures = np.array([])
 for pres in pressures:
-    P = int(round(pres/100)*100)
+    P = round(maxPressure * pres ** 2,2)
     Pressures = np.append(Pressures, P)
-Pressures = np.unique(np.append(Pressures, maxPressure))
-
 getDir = subprocess.Popen('pwd', stdout=subprocess.PIPE)
 location = getDir.communicate()[0].split()
 
@@ -37,13 +36,13 @@ mol = str(str(molecule.communicate()[0].split()[0])).replace(".def","")
 #make the head directory
 head = cif.rsplit('_')[0]+'_'+mol+'_'+temp.rsplit('.')[0]+'K_DDEC6_UFF'
 headDir = subprocess.Popen('mkdir {0}'.format(head), shell=True)
-time.sleep(1)
+time.sleep(0.004)
 
 for pressure in Pressures:
     fil = str(location[0]) + '/' + head + '/' + str(pressure).split(".")[0] + 'mbar'
     createDir = subprocess.Popen('mkdir {0}'.format(fil), stdout=subprocess.PIPE, shell=True)
     #copy the necessary to each directory
-    time.sleep(1)
+    time.sleep(0.004)
     copyfile = subprocess.Popen('cp *.def {0}'.format(fil), shell=True)
     copyfile2 = subprocess.Popen('cp *.cif {0}'.format(fil), shell=True)
     #write the simulation.input file
@@ -53,7 +52,7 @@ for pressure in Pressures:
     inputFile.write('NumberOfInitializationCycles\t3000\n')
     inputFile.write('PrintEvery\t100\n\n')
     inputFile.write('ChargeMethod\tEwald\n')
- #   inputFile.write('Cutoff\t14.0\n')
+    inputFile.write('Cutoff\t14.0\n')
     inputFile.write('OmitInterMolecularInteractions\tno\n')
     inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tno\n')
     inputFile.write('OmitAdsorbateAdsorbateCoulombInteractions\tno\n\n')
