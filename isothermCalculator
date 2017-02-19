@@ -16,7 +16,7 @@ while (voidFraction > 1.0 or voidFraction < 0.0):
         print('Likely invalid entry. Try again.\n')
     voidFraction = float(raw_input('Enter the He void fraction of the MOF.\n'))
 print('\n\nCalculations:\n')
-#create the pressure directories, and copy the files to them, then write the simulation.input and job.pbs files
+#create the pressure values that will be used in the calculation
 pressures = np.linspace(0,1,num=20,endpoint=False)
 Pressures = np.array([])
 for pres in pressures:
@@ -39,7 +39,7 @@ headDir = subprocess.Popen('mkdir {0}'.format(head), shell=True)
 time.sleep(0.004)
 
 for pressure in Pressures:
-    fil = str(location[0]) + '/' + head + '/' + str(pressure).split(".")[0] + 'mbar'
+    fil = str(location[0]) + '/' + head + '/' + str(pressure) + 'mbar'
     createDir = subprocess.Popen('mkdir {0}'.format(fil), stdout=subprocess.PIPE, shell=True)
     #copy the necessary to each directory
     time.sleep(0.004)
