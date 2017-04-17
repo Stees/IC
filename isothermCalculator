@@ -84,6 +84,8 @@ for pressure in Pressures:
     jobfile.write('cd $PBS_O_WORKDIR\n')
     jobfile.write('module load raspa2/gcc-5.2.0\n\n')
     jobfile.write('simulate simulation.input\n')
+    jobfile.write('find ./ -type d -exec chmod 750 {} +\n')
+    jobfile.write('find ./ -type f -exec chmod 640 {} +\n')
     jobfile.write('exit 0')
     jobfile.close()
     job = subprocess.Popen('qsub job.pbs', stdout=subprocess.PIPE, cwd=fil, shell=True)
