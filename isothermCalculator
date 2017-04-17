@@ -51,7 +51,7 @@ for pressure in Pressures:
     inputFile.write('NumberOfCycles\t35000\n')
     inputFile.write('NumberOfInitializationCycles\t6000\n')
     inputFile.write('PrintEvery\t100\n')
-    inputFile.write('RestartFile\tyes\n\n')
+    inputFile.write('RestartFile\tno\n\n')
     inputFile.write('ContinueAfterCrash\tno\n')
     inputFile.write('WriteBinaryRestartFileEvery\t5000\n\n')
     inputFile.write('ChargeMethod\tEwald\n')
