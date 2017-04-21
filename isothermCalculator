@@ -49,7 +49,7 @@ for pressure in Pressures:
     inputFile = open('{0}/simulation.input'.format(fil), 'w')
     inputFile.write('SimulationType\tMonteCarlo\n')
     inputFile.write('NumberOfCycles\t35000\n')
-    inputFile.write('NumberOfInitializationCycles\t6000\n')
+    inputFile.write('NumberOfInitializationCycles\t10000\n')
     inputFile.write('PrintEvery\t100\n\n')
     inputFile.write('ChargeMethod\tEwald\n')
     inputFile.write('Cutoff\t14.0\n')
