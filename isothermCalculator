@@ -41,6 +41,7 @@ if 'login0.crc.pitt.edu' in host:
     head = cif.rsplit('_')[0]+'_'+mol+'_'+temp.rsplit('.')[0]+'K_DDEC6_UFF'
     headDir = subprocess.Popen('mkdir {0}'.format(head), shell=True)
     time.sleep(0.004)
+    subprocess.Popen('touch Isotherm', shell=True)
 
     for pressure in Pressures:
         fil = str(location[0]) + '/' + head + '/' + str(pressure) + 'mbar'
