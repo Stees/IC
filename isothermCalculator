@@ -53,7 +53,7 @@ if 'login0.crc.pitt.edu' in host:
         #write the simulation.input file
         inputFile = open('{0}/simulation.input'.format(fil), 'w')
         inputFile.write('SimulationType\tMonteCarlo\n')
-        inputFile.write('NumberOfCycles\t35000\n')
+        inputFile.write('NumberOfCycles\t40000\n')
         inputFile.write('NumberOfInitializationCycles\t15000\n')
         inputFile.write('PrintEvery\t100\n')
         inputFile.write('RestartFile\tno\n\n')
