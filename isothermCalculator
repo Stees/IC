@@ -11,32 +11,88 @@ getHost = subprocess.Popen('hostname', stdout=subprocess.PIPE)
 host = getHost.communicate()[0].split()[0]
 
 if 'login0.crc.pitt.edu' in host:
+    np.set_printoptions(suppress=True)
     #get maximum pressure and the temperature of the isotherm
-    preTemp = raw_input('At what temperature should this isotherm be run? (K)\n')
+    tempHold = 0
+    while tempHold != 1:
+        preTemp = raw_input('At what temperature should this isotherm be run? (K)\n')
+        try:
+            if isinstance(float(preTemp), float):
+                temp = float(preTemp.replace(" ",""))
+                tempHold = 1
+            else:
+                print('\nInvalid entry. Try again.\n')
+        except:
+            print('\nInvalid entry. Try again.\n')
     temp = preTemp.replace(" ","") + '.0'
-    maxPressure = float(raw_input('What is the maximum pressure of the isotherm? (mbar)\n'))
+    presHold = 0
+    while presHold != 1:
+        prePres = raw_input('What is the maximum pressure of the isotherm? (mbar)\n')
+        try:
+            if isinstance(float(prePres), float):
+                maxPressure = float(prePres.replace(" ",""))
+                presHold = 1
+            else:
+                print('\nInvalid entry. Try again.\n')
+        except:
+            print('\nInvalid entry. Try again.\n')
+    cycleHold = 0
+    while cycleHold != 1:
+        numCyclesPre = raw_input('How many cycles do you want the calculations to run for?\n')
+        try:
+            numCycles = int(math.floor(int(numCyclesPre)))
+            cycleHold = 1
+        except:
+            print('\nYou made an invalid entry. Try again.\n')
     voidFraction = 2.0
-    while (voidFraction > 1.0 or voidFraction < 0.0):
-        if (voidFraction != 2):
-            print('Likely invalid entry. Try again.\n')
-        voidFraction = float(raw_input('Enter the He void fraction of the MOF.\n'))
+    voidHold = 0
+    while voidHold != 1:
+        while (voidFraction > 1.0 or voidFraction < 0.0):
+            if (voidFraction != 2):
+                print('Try again.\n')
+            try:
+                voidFraction = float(raw_input('Enter the He void fraction of the MOF.\n'))
+                voidHold = 1
+            except:
+                print('\nInvalid entry.\n')
     print('\n\nCalculations:\n')
+    #determine the components of the calculation
+    componentsPre = subprocess.Popen('bash -O extglob -c "ls !(+(p*|f*))+(.def)"', stdout=subprocess.PIPE, shell=True)
+    components = componentsPre.communicate()[0].splitlines()
     #create the pressure values that will be used in the calculation
     pressures = np.linspace(0,1,num=20,endpoint=False)
-    Pressures = np.array([],dtype=float)
+    bigPressures = np.array([],dtype=float)
     for pres in pressures:
-        P = round(maxPressure * pres ** 2,3)
-        Pressures = np.append(Pressures, P)
+        P = round(maxPressure * pres ** 2,2)
+        bigPressures = np.append(bigPressures, P)
+    #medium range low pressures
+    midPressuresPre = np.linspace(0,1,num=10,endpoint=False)
+    midPressures = np.array([],dtype=float)
+    for pres in midPressuresPre:
+        P = round(pres ** 3,5)
+        midPressures = np.append(midPressures, P)
+    #make low pressures
+    smallPressures = np.array([],dtype=float)
+    pressures2 = np.linspace(0,0.5,num=10,endpoint=True)
+    for pres in pressures2:
+        p = round(pres ** 9,10)
+        smallPressures = np.append(smallPressures, p)
+    print('{0}'.format(smallPressures))
+    print('{0}'.format(midPressures))
+    print('{0}'.format(bigPressures))
+    tempArray = np.array(np.append(smallPressures,midPressures),dtype=float)
+    Pressures = np.array(np.unique(np.append(tempArray,np.unique(bigPressures))),dtype=float)
+    print('{0}'.format(Pressures))
     getDir = subprocess.Popen('pwd', stdout=subprocess.PIPE)
     location = getDir.communicate()[0].split()
     #get the name of the cif file
     cifFile = subprocess.Popen('ls *.cif', stdout=subprocess.PIPE, cwd=str(location[0]), shell=True)
     cif = str(str(cifFile.communicate()[0].split()[0]).rsplit('.cif')[0])
-    #identify the molecule file in the directory
-    molecule = subprocess.Popen('bash -O extglob -c "ls !(+(force_field|pseudo)*) | grep "def""', stdout=subprocess.PIPE, cwd=str(location[0]), shell=True)
-    mol = str(str(molecule.communicate()[0].split()[0])).replace(".def","")
+    mol = ''
+    for component in components:
+        mol+=str(component.replace('.def',''))+'_'
     #make the head directory
-    head = cif.rsplit('_')[0]+'_'+mol+'_'+temp.rsplit('.')[0]+'K_DDEC6_UFF'
+    head = cif.rsplit('_')[0]+'_'+mol+temp.rsplit('.')[0]+'K_DDEC6_UFF'
     headDir = subprocess.Popen('mkdir {0}'.format(head), shell=True)
     time.sleep(0.09)
     subprocess.Popen('touch Isotherm', cwd=head, shell=True)
@@ -50,7 +106,7 @@ if 'login0.crc.pitt.edu' in host:
         #write the simulation.input file
         inputFile = open('{0}/simulation.input'.format(fil), 'w')
         inputFile.write('SimulationType\tMonteCarlo\n')
-        inputFile.write('NumberOfCycles\t50000\n')
+        inputFile.write('NumberOfCycles\t{0}\n'.format(numCycles))
         inputFile.write('NumberOfInitializationCycles\t15000\n')
         inputFile.write('PrintEvery\t100\n')
         inputFile.write('RestartFile\tno\n\n')
@@ -69,22 +125,23 @@ if 'login0.crc.pitt.edu' in host:
         inputFile.write('HeliumVoidFraction\t{0}\n'.format(voidFraction))
         inputFile.write('ExternalTemperature\t{0}\n'.format(temp))
         inputFile.write('ExternalPressure\t{0}\n\n'.format(str(pressure*100)))
-        inputFile.write('Component 0 MoleculeName\t{0}\n'.format(mol))
-        inputFile.write('\tMoleculeDefinition\tTraPPE\n')
-        inputFile.write('\tTranslationProbability\t0.5\n')
-        inputFile.write('\tRotationProbability\t0.5\n')
-        inputFile.write('\tReinsertionProbability\t0.0\n')
-        inputFile.write('\tSwapProbability\t\t1.0\n')
-        inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
+        for j, component in enumerate(components):
+            inputFile.write('Component {0} MoleculeName\t{1}\n'.format(j,component.replace(".def","")))
+            inputFile.write('\tMoleculeDefinition\tTraPPE\n')
+            inputFile.write('\tTranslationProbability\t0.5\n')
+            inputFile.write('\tRotationProbability\t0.5\n')
+            inputFile.write('\tReinsertionProbability\t0.0\n')
+            inputFile.write('\tSwapProbability\t\t1.0\n')
+            inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
         inputFile.close()
         #make the jobfile
         jobfile = open('{0}/job.slurm'.format(fil), 'w')
         jobfile.write('#!/usr/bin/env bash\n')
-        jobfile.write('#SBATCH --job-name="{0}"\n'.format(cif.rsplit("_",1)[0]+'_'+str(pressure).split(".")[0]+'mbar'))
-        jobfile.write('#SBATCH --output="{0}.out"\n'.format(cif.rsplit("_",1)[0]+'_'+str(pressure).split(".")[0]+'mbar'))
+        jobfile.write('#SBATCH --job-name="{0}"\n'.format(cif.rsplit("_",1)[0]+'_'+mol+temp.rsplit('.')[0]+'K_'+str(pressure)+'mbar'))
+        jobfile.write('#SBATCH --output="{0}.out"\n'.format(cif.rsplit("_",1)[0]+'_'+mol+str(pressure)+'mbar'))
         jobfile.write('#SBATCH --nodes=1\n')
         jobfile.write('#SBATCH --cluster=smp\n')
-        jobfile.write('#SBATCH --partition=smp\n')
+        jobfile.write('#SBATCH --partition=test\n')
         jobfile.write('#SBATCH --ntasks-per-node=1\n')
         jobfile.write('#SBATCH --time=6-00:00:00\n')
         jobfile.write('#SBATCH --qos=long\n\n')
@@ -99,6 +156,6 @@ if 'login0.crc.pitt.edu' in host:
         jobfile.close()
         job = subprocess.Popen('sbatch job.slurm', stdout=subprocess.PIPE, cwd=fil, shell=True)
         print('{0} {1}'.format(job.communicate()[0].split()[3],str(pressure)+'mbar'))
-    cleanup = subprocess.Popen('rm *def *cif', shell=True)
+    #cleanup = subprocess.Popen('rm *def *cif', shell=True)
 else:
     print('\nYou are logged in to the wrong location. Log in to opa.\n')
