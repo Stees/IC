@@ -15,15 +15,15 @@ if 'login0.crc.pitt.edu' in host:
     #make sure there are def and cif files in the directory
     checkFile = subprocess.Popen('ls', stdout=subprocess.PIPE)
     checkFiles = checkFile.communicate()[0]
+    getDir = subprocess.Popen('pwd', stdout=subprocess.PIPE)
+    location = getDir.communicate()[0].split()
+    mol = ''
     if '.cif' in checkFiles and '.def' in checkFiles:
         cifFile = subprocess.Popen('ls *.cif', stdout=subprocess.PIPE, shell=True)
         cif = str(str(cifFile.communicate()[0].split()[0]).rsplit('.cif')[0])
-        getDir = subprocess.Popen('pwd', stdout=subprocess.PIPE)
-        location = getDir.communicate()[0].split()
         #determine the components of the calculation
         componentsPre = subprocess.Popen('bash -O extglob -c "ls !(+(p*|f*))+(.def)"', stdout=subprocess.PIPE, shell=True)
         components = componentsPre.communicate()[0].splitlines()
-        mol = ''
         for component in components:
             mol+=str(component.replace('.def',''))+'_'
         np.set_printoptions(suppress=True)
