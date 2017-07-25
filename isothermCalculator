@@ -259,6 +259,8 @@ if 'login0.crc.pitt.edu' in host:
                         inputFile.write('\tRotationProbability\t{0}\n'.format(parameterArray[j][2]))
                         inputFile.write('\tReinsertionProbability\t{0}\n'.format(parameterArray[j][3]))
                         inputFile.write('\tSwapProbability\t\t{0}\n'.format(parameterArray[j][4]))
+                        inputFile.write('\tCBMCProbability\t\t{0}\n'.format(parameterArray[j][5]))
+                        inputFile.write('\tCFSwapLambdaProbability\t\t{0}\n'.format(parameterArray[j][6]))
                         inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
                 else:
                     if noFlag == True:
@@ -323,12 +325,34 @@ if 'login0.crc.pitt.edu' in host:
                                                 print('\nInvalid entry. Try again.\n')
                                         except:
                                             print('\nInvalid entry. Try again.\n')
+                                    cbmcProb = -1
+                                    while cbmcProb == -1:
+                                        tempProb = raw_input('\nCBMC probability for {0}?\n'.format(component))
+                                        try:
+                                            if isinstance(float(tempProb), float):
+                                                cbmcProb = float(tempProb.replace(" ",""))
+                                            else:
+                                                print('\nInvalid entry. Try again.\n')
+                                        except:
+                                            print('\nInvalid entry. Try again.\n')
+                                    cfmcProb = -1
+                                    while cfmcProb == -1:
+                                        tempProb = raw_input('\nCF Swap Lambda probability for {0}?\n'.format(component))
+                                        try:
+                                            if isinstance(float(tempProb), float):
+                                                cfmcProb = float(tempProb.replace(" ",""))
+                                            else:
+                                                print('\nInvalid entry. Try again.\n')
+                                        except:
+                                            print('\nInvalid entry. Try again.\n')
                                     inputFile.write('\tTranslationProbability\t{0}\n'.format(translateProb))
                                     inputFile.write('\tRotationProbability\t{0}\n'.format(rotationProb))
                                     inputFile.write('\tReinsertionProbability\t{0}\n'.format(reinsertionProb))
                                     inputFile.write('\tSwapProbability\t\t{0}\n'.format(swapProb))
+                                    inputFile.write('\tCBMCProbability\t\t{0}\n'.format(cbmcProb))
+                                    inputFile.write('\tCFSwapLambdaProbability\t\t{0}\n'.format(cfmcProb))
                                     inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
-                                    parameterArray.append([component,translateProb,rotationProb,reinsertionProb,swapProb])
+                                    parameterArray.append([component,translateProb,rotationProb,reinsertionProb,swapProb,cbmcProb,cfmcProb])
                                 trueFlag = True
                                 print('\n\nCalculations\n')
                             elif tempVAR == 'n':
