@@ -11,7 +11,7 @@ import sys
 getHost = subprocess.Popen('hostname', stdout=subprocess.PIPE)
 host = getHost.communicate()[0].split()[0]
 
-if 'login0.crc.pitt.edu' in host:
+if 'login1.crc.pitt.edu' in host:
     #make sure there are def and cif files in the directory
     checkFile = subprocess.Popen('ls', stdout=subprocess.PIPE)
     checkFiles = checkFile.communicate()[0]
@@ -255,7 +255,7 @@ if 'login0.crc.pitt.edu' in host:
                     for j in range(0,len(components)):
                         inputFile.write('Component {0} MoleculeName\t{1}\n'.format(j,parameterArray[j][0]))
                         inputFile.write('\tMoleculeDefinition\tTraPPE\n')
-                        inputFile.write('\MolFraction\t{0}\n'.format(parameterArray[j][1]))
+                        inputFile.write('\tMolFraction\t{0}\n'.format(parameterArray[j][1]))
                         inputFile.write('\tTranslationProbability\t{0}\n'.format(parameterArray[j][2]))
                         inputFile.write('\tRotationProbability\t{0}\n'.format(parameterArray[j][3]))
                         inputFile.write('\tReinsertionProbability\t{0}\n'.format(parameterArray[j][4]))
@@ -296,7 +296,7 @@ if 'login0.crc.pitt.edu' in host:
                                                 print('\nInvalid entry. Try again.\n')
                                         except:
                                             print('\nInvalid entry. Try again.\n')
-									translateProb = -1
+                                    translateProb = -1
                                     while translateProb == -1:
                                         tempProb = raw_input('\nTranslation probability for {0}?\n'.format(component))
                                         try:
@@ -356,8 +356,8 @@ if 'login0.crc.pitt.edu' in host:
                                                 print('\nInvalid entry. Try again.\n')
                                         except:
                                             print('\nInvalid entry. Try again.\n')
-                                    inputFile.write('\tTranslationProbability\t{0}\n'.format(molFrac))
-									inputFile.write('\tTranslationProbability\t{0}\n'.format(translateProb))
+                                    inputFile.write('\tMolFraction\t{0}\n'.format(molFrac))
+                                    inputFile.write('\tTranslationProbability\t{0}\n'.format(translateProb))
                                     inputFile.write('\tRotationProbability\t{0}\n'.format(rotationProb))
                                     inputFile.write('\tReinsertionProbability\t{0}\n'.format(reinsertionProb))
                                     inputFile.write('\tSwapProbability\t\t{0}\n'.format(swapProb))
