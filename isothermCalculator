@@ -24,6 +24,7 @@ if 'login0.crc.pitt.edu' in host:
         #determine the components of the calculation
         componentsPre = subprocess.Popen('bash -O extglob -c "ls !(+(p*|f*))+(.def)"', stdout=subprocess.PIPE, shell=True)
         components = componentsPre.communicate()[0].splitlines()
+        componentIGRW = []
         for component in components:
             mol+=str(component.replace('.def',''))+'_'
         np.set_printoptions(suppress=True)
@@ -98,8 +99,8 @@ if 'login0.crc.pitt.edu' in host:
                 except:
                     print('\nInvalid entry. Try again.\n')
             #make the pressure range
-            pressures = np.linspace(appPresMin,appPresMax,num=10,endpoint=False)
-            #get the current directories, and make sure we none of the pressures are in the list of directories
+            pressures = np.linspace(appPresMin,appPresMax,num=5,endpoint=True)
+            #get the current directories, and make sure none of the pressures are in the list of directories
             getCurrentDirs = subprocess.Popen('find ./{0} -maxdepth 1 -mindepth 1 -type d'.format(dirs[addCalc]), stdout=subprocess.PIPE, shell=True)
             currentDirs = getCurrentDirs.communicate()[0].splitlines()
             Pressures = []
@@ -114,7 +115,7 @@ if 'login0.crc.pitt.edu' in host:
             appString = ''
             head = dirs[addCalc].replace('./','')
         elif mode == 2:
-            #get maximum pressure, temperature, number of cycles, number of initialization cycles, void fraction
+            #get maximum pressure, temperature, number of cycles, number of initialization cycles, void fraction, ideal gas rosenbluth weights for each component
             temp = 0
             while temp == 0:
                 preTemp = raw_input('\nAt what temperature should this isotherm be run? (K)\n')
@@ -161,6 +162,16 @@ if 'login0.crc.pitt.edu' in host:
                         voidHold = 1
                     except:
                         print('\nInvalid entry.\n')
+            igrwHold = 0
+            while igrwHold != 1:
+                for item in components:
+                    try:
+                        tempFraction = float(raw_input('\nEnter the IGRW of {0} at {1}\n'.format(item.replace(".def",""),preTemp)))
+                    except:
+                        print('\nYou made an invalid entry. Try again.\n')
+                    componentIGRW.append(tempFraction)
+                if item == components[-1]:
+                    igrwHold = 1
             #create the pressure values that will be used in the calculation
             pressures = np.linspace(0,1,num=20,endpoint=False)
             bigPressures = np.array([],dtype=float)
@@ -235,7 +246,7 @@ if 'login0.crc.pitt.edu' in host:
             inputFile.write('ChargeMethod\tEwald\n')
             inputFile.write('Cutoff\t14.0\n')
             inputFile.write('OmitInterMolecularInteractions\tno\n')
-            inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tno\n')
+            inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tyes\n')
             inputFile.write('OmitAdsorbateAdsorbateCoulombInteractions\tno\n\n')
             inputFile.write('UseChargesFromCIFFile\tyes\n')
             inputFile.write('Forcefield\tGenericMOFs\n\n')
@@ -267,6 +278,7 @@ if 'login0.crc.pitt.edu' in host:
                         for j, component in enumerate(components):
                             inputFile.write('Component {0} MoleculeName\t{1}\n'.format(j,component.replace(".def","")))
                             inputFile.write('\tMoleculeDefinition\tTraPPE\n')
+                            inputFile.write('\tIdealGasRosenbluthWeight\t{0}\n'.format(componentIGRW[j]))
                             inputFile.write('\tTranslationProbability\t0.5\n')
                             inputFile.write('\tRotationProbability\t0.5\n')
                             inputFile.write('\tReinsertionProbability\t0.0\n')
@@ -383,7 +395,7 @@ if 'login0.crc.pitt.edu' in host:
             jobfile.write('#SBATCH --cluster=smp\n')
             jobfile.write('#SBATCH --partition=smp\n')
             jobfile.write('#SBATCH --ntasks-per-node=1\n')
-            jobfile.write('#SBATCH --time=6-00:00:00\n')
+            jobfile.write('#SBATCH --time=5-00:00:00\n')
             jobfile.write('#SBATCH --qos=long\n\n')
             jobfile.write('module purge\n')
             jobfile.write('module load python/anaconda2.7-4.2.0\n')
