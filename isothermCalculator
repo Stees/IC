@@ -247,6 +247,8 @@ if 'login0.crc.pitt.edu' in host:
             inputFile.write('WriteMoviesEvery\t100\n')
             inputFile.write('ChargeMethod\tEwald\n')
             inputFile.write('Cutoff\t14.0\n')
+            inputFile.write('CutOffChargeCharge\t14.0\n')
+            inputFile.write('CutOffChargeChargeSwitch\t14.0\n')
             inputFile.write('OmitInterMolecularInteractions\tno\n')
             inputFile.write('OmitAdsorbateAdsorbateVDWInteractions\tno\n')
             inputFile.write('OmitAdsorbateAdsorbateCoulombInteractions\tno\n\n')
