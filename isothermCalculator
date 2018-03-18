@@ -166,7 +166,7 @@ if 'crc.pitt.edu' in host:
             while igrwHold != 1:
                 for item in components:
                     try:
-                        tempFraction = float(raw_input('\nEnter the IGRW of {0} at {1}\n'.format(item.replace(".def",""),preTemp)))
+                        tempFraction = float(raw_input('\nEnter the IGRW of {0} at {1} K\n'.format(item.replace(".def",""),preTemp)))
                     except:
                         print('\nYou made an invalid entry. Try again.\n')
                     componentIGRW.append(tempFraction)
@@ -304,7 +304,7 @@ if 'crc.pitt.edu' in host:
                                     inputFile.write('\tMoleculeDefinition\tTraPPE\n')
                                     molFrac = -1
                                     while molFrac == -1:
-                                        tempProb = raw_input('\nMol Fraction for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nMol Fraction for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 molFrac = float(tempProb.replace(" ",""))
@@ -314,7 +314,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     translateProb = -1
                                     while translateProb == -1:
-                                        tempProb = raw_input('\nTranslation probability for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nTranslation probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 translateProb = float(tempProb.replace(" ",""))
@@ -324,7 +324,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     rotationProb = -1
                                     while rotationProb == -1:
-                                        tempProb = raw_input('\nRotation probability for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nRotation probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 rotationProb = float(tempProb.replace(" ",""))
@@ -334,7 +334,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     reinsertionProb = -1
                                     while reinsertionProb == -1:
-                                        tempProb = raw_input('\nReinsertion probability for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nReinsertion probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 reinsertionProb = float(tempProb.replace(" ",""))
@@ -344,7 +344,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     swapProb = -1
                                     while swapProb == -1:
-                                        tempProb = raw_input('\nSwap probability for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nSwap probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 swapProb = float(tempProb.replace(" ",""))
@@ -354,7 +354,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     cbmcProb = -1
                                     while cbmcProb == -1:
-                                        tempProb = raw_input('\nCBMC probability for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nCBMC probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 cbmcProb = float(tempProb.replace(" ",""))
@@ -364,7 +364,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     cfmcProb = -1
                                     while cfmcProb == -1:
-                                        tempProb = raw_input('\nCF Swap Lambda probability for {0}?\n'.format(component))
+                                        tempProb = raw_input('\nCF Swap Lambda probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 cfmcProb = float(tempProb.replace(" ",""))
