@@ -411,7 +411,10 @@ if 'login0.crc.pitt.edu' in host:
             jobfile.write('exit 0')
             jobfile.close()
             job = subprocess.Popen('sbatch job.slurm', stdout=subprocess.PIPE, cwd=fil, shell=True)
-            print('{0} {1}'.format(job.communicate()[0].split()[3],str(pressure)+'mbar'))
+            #get job number and write it to a file
+            jobID = job.communicate()[0].split()[3]
+            subprocess.Popen('touch {0}'.format(jobID), cwd=fil, shell=True)
+            print('{0} {1}'.format(jobID,str(pressure)+'mbar'))
             #cleanup = subprocess.Popen('rm *def *cif', shell=True)
     else:
         print('\nYou may not be in the directory you think you are in...\n')
