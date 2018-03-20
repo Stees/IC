@@ -239,7 +239,7 @@ if 'crc.pitt.edu' in host:
             inputFile.write('SimulationType\tMonteCarlo\n')
             inputFile.write('NumberOfCycles\t{0}\n'.format(numCycles))
             inputFile.write('NumberOfInitializationCycles\t{0}\n'.format(numICycles))
-            inputFile.write('PrintEvery\t100\n')
+            inputFile.write('PrintEvery\t10000\n')
             inputFile.write('RestartFile\tno\n\n')
             inputFile.write('ContinueAfterCrash\tno\n')
             inputFile.write('WriteBinaryRestartFileEvery\t5000\n\n')
