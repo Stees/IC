@@ -47,7 +47,7 @@ if 'crc.pitt.edu' in host:
                 print('\nExiting.\n')
                 time.sleep(0.5)
                 sys.exit()
-            print('\nChoose one of the following calculations to add points to.\n')
+            print('\nChoose one of the followng calculations to add points to.\n')
             for j, line in enumerate(dirs):
                 print('{0}: {1}'.format(j, line.replace('./','')))
             addCalc = -1
@@ -184,14 +184,40 @@ if 'crc.pitt.edu' in host:
             for pres in midPressuresPre:
                 P = round(pres ** 3,5)
                 midPressures = np.append(midPressures, P)
-            #make low pressures
-            smallPressures = np.array([],dtype=float)
-            pressures2 = np.linspace(0,0.5,num=10,endpoint=True)
-            for pres in pressures2:
-                p = round(pres ** 9,10)
-                smallPressures = np.append(smallPressures, p)
-            tempArray = np.array(np.append(smallPressures,midPressures),dtype=float)
-            Pressures = np.array(np.unique(np.append(tempArray,np.unique(bigPressures))),dtype=float)
+            #make low pressures if needed
+            pHold = 0
+            while pHold != 1:
+                try:
+                    tempValue = str(raw_input('\nIs the low pressure (less than 0.1 mbar) range needed? (y/n)\n'))
+                    if tempValue == 'y' or tempValue == 'n':
+                        pHold = 1
+                        if tempValue == 'y':
+                            smallPressures = np.array([],dtype=float)
+                            pressures2 = np.linspace(0,0.5,num=10,endpoint=True)
+                            for pres in pressures2:
+                                p = round(pres ** 9,10)
+                                smallPressures = np.append(smallPressures, p)
+                            tempArray = np.array(np.append(smallPressures,midPressures),dtype=float)
+                        elif tempValue == 'n':
+                            tempArray = np.array(np.append(midPressures), dtype=float)
+                except:
+                    print('\nTry again.\n')
+            specificHold = 0
+            while specificHold != 1:
+                try:
+                    tempValue = str(raw_input('\nAre additional, specific pressures needed? (y/n)'))
+                    if tempValue == 'y' or tempValue == 'n':
+                        specificHold = 2
+                        while specificHold == 2:
+                            tempPressures = raw_input('Enter the desired specific pressures in mbar, separated by spaces\n')
+                            tempPressureList = np.unqiue(np.array([int(s) for s in tempPressures.split() if s.isdigit()]))
+                            if tempPressureList.any():
+                                specificHold = 1
+                                tempArray = np.array(np.append(tempArray,tempPressureList))
+                except:
+                    print('\nTry again.\n')
+                    
+            Pressures =  np.array(np.unique(np.append(tempArray,np.unique(bigPressures))),dtype=float)
             #make the head directory
             head = cif.rsplit('_')[0]+'_'+mol+temp.rsplit('.')[0]+'K_DDEC6_UFF'
             #check if the head directory already exists
@@ -243,8 +269,8 @@ if 'crc.pitt.edu' in host:
             inputFile.write('RestartFile\tno\n\n')
             inputFile.write('ContinueAfterCrash\tno\n')
             inputFile.write('WriteBinaryRestartFileEvery\t5000\n\n')
-            inputFile.write('Movies\tyes\n')
-            inputFile.write('WriteMoviesEvery\t100\n')
+            inputFile.write('Movies\tno\n')
+#            inputFile.write('WriteMoviesEvery\t100\n')
             inputFile.write('ChargeMethod\tEwald\n')
             inputFile.write('Cutoff\t14.0\n')
             inputFile.write('CutOffChargeCharge\t14.0\n')
@@ -270,6 +296,7 @@ if 'crc.pitt.edu' in host:
                     for j in range(0,len(components)):
                         inputFile.write('Component {0} MoleculeName\t{1}\n'.format(j,parameterArray[j][0]))
                         inputFile.write('\tMoleculeDefinition\tTraPPE\n')
+                        inputFile.write('\tIdealGasRosenbluthWeight\t{0}\n'.format(componentIGRW[j]))
                         inputFile.write('\tMolFraction\t{0}\n'.format(parameterArray[j][1]))
                         inputFile.write('\tTranslationProbability\t{0}\n'.format(parameterArray[j][2]))
                         inputFile.write('\tRotationProbability\t{0}\n'.format(parameterArray[j][3]))
