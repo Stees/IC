@@ -188,7 +188,7 @@ if 'crc.pitt.edu' in host:
             pHold = 0
             while pHold != 1:
                 try:
-                    tempValue = str(raw_input('\nIs the low pressure (less than 0.1 mbar) range needed? (y/n)\n'))
+                    tempValue = str(raw_input('\nIs the low pressure (less than 0.001 mbar) range needed? (y/n)\n'))
                     if tempValue == 'y' or tempValue == 'n':
                         pHold = 1
                         if tempValue == 'y':
@@ -199,19 +199,19 @@ if 'crc.pitt.edu' in host:
                                 smallPressures = np.append(smallPressures, p)
                             tempArray = np.array(np.append(smallPressures,midPressures),dtype=float)
                         elif tempValue == 'n':
-                            tempArray = np.array(np.append(midPressures), dtype=float)
+                            tempArray = midPressures
                 except:
                     print('\nTry again.\n')
             specificHold = 0
             while specificHold != 1:
                 try:
-                    tempValue = str(raw_input('\nAre additional, specific pressures needed? (y/n)'))
+                    tempValue = str(raw_input('\nAre additional, specific pressures needed? (y/n)\n'))
                     if tempValue == 'y' or tempValue == 'n':
                         specificHold = 2
                         while specificHold == 2:
-                            tempPressures = raw_input('Enter the desired specific pressures in mbar, separated by spaces\n')
-                            tempPressureList = np.unqiue(np.array([int(s) for s in tempPressures.split() if s.isdigit()]))
-                            if tempPressureList.any():
+                            tempPressures = raw_input('\nEnter the desired specific pressures in mbar, separated by spaces\n')
+                            tempPressureList = np.unique(np.array([int(s) for s in tempPressures.split() if s.isdigit()]))
+                            if tempPressureList.size > 0:
                                 specificHold = 1
                                 tempArray = np.array(np.append(tempArray,tempPressureList))
                 except:
