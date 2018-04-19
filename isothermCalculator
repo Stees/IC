@@ -7,6 +7,8 @@ import readline
 import numpy as np
 import math
 import sys
+import random
+
 
 getHost = subprocess.Popen('hostname', stdout=subprocess.PIPE)
 host = getHost.communicate()[0].split()[0]
@@ -267,6 +269,7 @@ if 'crc.pitt.edu' in host:
             inputFile.write('NumberOfInitializationCycles\t{0}\n'.format(numICycles))
             inputFile.write('PrintEvery\t10000\n')
             inputFile.write('RestartFile\tno\n\n')
+            inputFile.write('RandomSeed\t{0}\n'.format(random.randint(1,10000001)))
             inputFile.write('ContinueAfterCrash\tno\n')
             inputFile.write('WriteBinaryRestartFileEvery\t5000\n\n')
             inputFile.write('Movies\tno\n')
