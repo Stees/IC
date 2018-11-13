@@ -323,10 +323,10 @@ if 'crc.pitt.edu' in host:
                             inputFile.write('\tSwapProbability\t\t1.0\n')
                             inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
                     else:
-                        print('\nDo you want to manually specify the move probabilities?\n')
+                        print('\nDo you want to manually specify the move probabilities? (y/n)')
                         override = 'A'
                         while (override != 'n' and override != 'y'):
-                            tempVAR = raw_input('y/n\n')
+                            tempVAR = raw_input('')
                             if tempVAR == 'y':
                                 override = 'y'
                                 print('\nEnter all values as decimals.\n')
