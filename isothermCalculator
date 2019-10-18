@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#code takes pseudo atoms, force field def, force field mixing rules, the relevant cif, and molecule definition files and copy them into directories created for each pressure the user wants to run for the isotherm. Writes the job.pbs and simulation.input files. Submits the jobs.
+#code takes pseudo atoms, force field def, force field mixing rules, the relevant cif, and molecule definition files and copy them into directories created for each pressure the user wants to run for the isotherm. Writes the job.slurm and simulation.input files. Submits the jobs.
 
 import subprocess
 import time
@@ -275,8 +275,8 @@ if 'crc.pitt.edu' in host:
             inputFile.write('RandomSeed\t{0}\n'.format(random.randint(1,10000001)))
             inputFile.write('ContinueAfterCrash\tno\n')
             inputFile.write('WriteBinaryRestartFileEvery\t5000\n\n')
-            inputFile.write('Movies\tno\n')
-#            inputFile.write('WriteMoviesEvery\t100\n')
+            inputFile.write('Movies\tyes\n')
+            inputFile.write('WriteMoviesEvery\t10000\n')
             inputFile.write('ChargeMethod\tEwald\n')
             inputFile.write('Cutoff\t14.0\n')
             inputFile.write('CutOffChargeCharge\t14.0\n')
@@ -288,7 +288,7 @@ if 'crc.pitt.edu' in host:
             inputFile.write('Forcefield\tGenericMOFs\n\n')
             inputFile.write('Framework\t0\n')
             inputFile.write('FrameworkName\t{0}\n'.format(cif))
-            inputFile.write('UnitCells 2 2 2\n')
+            inputFile.write('UnitCells 3 3 3\n')
             inputFile.write('HeliumVoidFraction\t{0}\n'.format(voidFraction))
             inputFile.write('ExternalTemperature\t{0}\n'.format(temp))
             inputFile.write('ExternalPressure\t{0}\n\n'.format(str(pressure*100)))
@@ -442,7 +442,7 @@ if 'crc.pitt.edu' in host:
                 jobfile.write('#SBATCH --output="{0}.out"\n'.format(cif.rsplit("_",1)[0]+'_'+mol+str(temp).split('.',1)[0]+'K_'+appString+'_'+str(pressure)+'mbar'))
             jobfile.write('#SBATCH --nodes=1\n')
             jobfile.write('#SBATCH --cluster=smp\n')
-            jobfile.write('#SBATCH --partition=smp\n')
+            jobfile.write('#SBATCH --partition=legacy\n')
             jobfile.write('#SBATCH --ntasks-per-node=1\n')
             jobfile.write('#SBATCH --time=6-00:00:00\n')
             jobfile.write('#SBATCH --qos=long\n\n')
