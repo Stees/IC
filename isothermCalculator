@@ -32,7 +32,7 @@ if 'crc.pitt.edu' in host:
         np.set_printoptions(suppress=True)
         mode = 0
         while (mode != 1 and mode != 2):
-            modeSelection = raw_input('\nDo you want to:\n1: Add points to an existing calculation.\n2: Create a new isotherm.\n\n')
+            modeSelection = input('\nDo you want to:\n1: Add points to an existing calculation.\n2: Create a new isotherm.\n\n')
             try:
                 mode = int(modeSelection.replace(' ',''))
                 if (mode != 1 and mode != 2):
@@ -54,7 +54,7 @@ if 'crc.pitt.edu' in host:
                 print('{0}: {1}'.format(j, line.replace('./','')))
             addCalc = -1
             while addCalc == -1:
-                chooseCalc = raw_input('\nType the number corresponding to your choice.\n')
+                chooseCalc = input('\nType the number corresponding to your choice.\n')
                 try:
                     calcNum = int(chooseCalc.replace(' ',''))
                     if (calcNum >= 0 and calcNum <= j):
@@ -82,7 +82,7 @@ if 'crc.pitt.edu' in host:
             appPresMin = 0
             print('\nNow specify the pressure range you want to test.\n')
             while appPresMin == 0:
-                tempPres = raw_input('What is the minimum pressure of the range? (mbar)\n')
+                tempPres = input('What is the minimum pressure of the range? (mbar)\n')
                 try:
                     if isinstance(float(tempPres), float):
                         appPresMin = float(tempPres.replace(" ",""))
@@ -92,7 +92,7 @@ if 'crc.pitt.edu' in host:
                     print('\nInvalid entry. Try again.\n')
             appPresMax = 0
             while appPresMax == 0:
-                tempPres = raw_input('What is the maximum pressure of the range? (mbar)\n')
+                tempPres = input('What is the maximum pressure of the range? (mbar)\n')
                 try:
                     if isinstance(float(tempPres), float):
                         appPresMax = float(tempPres.replace(" ",""))
@@ -120,7 +120,7 @@ if 'crc.pitt.edu' in host:
             #get maximum pressure, temperature, number of cycles, number of initialization cycles, void fraction, ideal gas rosenbluth weights for each component
             temp = 0
             while temp == 0:
-                preTemp = raw_input('\nAt what temperature should this isotherm be run? (K)\n')
+                preTemp = input('\nAt what temperature should this isotherm be run? (K)\n')
                 try:
                     if isinstance(float(preTemp), float):
                         temp = float(preTemp.replace(" ",""))
@@ -131,7 +131,7 @@ if 'crc.pitt.edu' in host:
             temp = preTemp.replace(" ","") + '.0'
             maxPressure = 0
             while maxPressure == 0:
-                prePres = raw_input('\nWhat is the maximum pressure of the isotherm? (mbar)\n')
+                prePres = input('\nWhat is the maximum pressure of the isotherm? (mbar)\n')
                 try:
                     if isinstance(float(prePres), float):
                         maxPressure = float(prePres.replace(" ",""))
@@ -141,14 +141,14 @@ if 'crc.pitt.edu' in host:
                     print('\nInvalid entry. Try again.\n')
             numICycles = 0
             while numICycles == 0:
-                numICyclesPre = raw_input('\nHow many initialization cycles are needed?\n')
+                numICyclesPre = input('\nHow many initialization cycles are needed?\n')
                 try:
                     numICycles = int(math.floor(int(numICyclesPre))) + 1
                 except:
                     print('\nYou made an invalid entry. Try again.\n')
             numCycles = 0
             while numCycles == 0:
-                numCyclesPre = raw_input('\nHow many production cycles are needed?\n')
+                numCyclesPre = input('\nHow many production cycles are needed?\n')
                 try:
                     numCycles = int(math.floor(int(numCyclesPre))) + 1
                 except:
@@ -160,7 +160,7 @@ if 'crc.pitt.edu' in host:
                     if (voidFraction != 2):
                         print('Try again.\n')
                     try:
-                        voidFraction = float(raw_input('\nEnter the He void fraction of the MOF.\n'))
+                        voidFraction = float(input('\nEnter the He void fraction of the MOF.\n'))
                         voidHold = 1
                     except:
                         print('\nInvalid entry.\n')
@@ -168,7 +168,7 @@ if 'crc.pitt.edu' in host:
             while igrwHold != 1:
                 for item in components:
                     try:
-                        tempFraction = float(raw_input('\nEnter the IGRW of {0} at {1} K\n'.format(item.replace(".def",""),preTemp)))
+                        tempFraction = float(input('\nEnter the IGRW of {0} at {1} K\n'.format(item.replace(".def",""),preTemp)))
                     except:
                         print('\nYou made an invalid entry. Try again.\n')
                     componentIGRW.append(tempFraction)
@@ -190,7 +190,7 @@ if 'crc.pitt.edu' in host:
             pHold = 0
             while pHold != 1:
                 try:
-                    tempValue = str(raw_input('\nIs the low pressure (less than 0.001 mbar) range needed? (y/n)\n'))
+                    tempValue = str(input('\nIs the low pressure (less than 0.001 mbar) range needed? (y/n)\n'))
                     if tempValue == 'y' or tempValue == 'n':
                         pHold = 1
                         if tempValue == 'y':
@@ -207,12 +207,12 @@ if 'crc.pitt.edu' in host:
             specificHold = 0
             while specificHold != 1:
                 try:
-                    tempValue = str(raw_input('\nAre additional, specific pressures needed? (y/n)\n'))
+                    tempValue = str(input('\nAre additional, specific pressures needed? (y/n)\n'))
                     if tempValue == 'y' or tempValue == 'n':
                         if tempValue == 'y':
                             specificHold = 2
                             while specificHold == 2:
-                                tempPressures = raw_input('\nEnter the desired specific pressures in mbar, separated by spaces\n')
+                                tempPressures = input('\nEnter the desired specific pressures in mbar, separated by spaces\n')
                                 tempPressureList = np.unique(np.array([int(s) for s in tempPressures.split() if s.isdigit()]))
                                 if tempPressureList.size > 0:
                                     specificHold = 1
@@ -236,7 +236,7 @@ if 'crc.pitt.edu' in host:
                 hole = 0
                 while hole == 0:
                     try:
-                        appString = raw_input('What should I add to the directory name?\n').replace(" ","")
+                        appString = input('What should I add to the directory name?\n').replace(" ","")
                         if not appString:
                             print('\nLet\'s try that again.\n')
                         else:
@@ -319,14 +319,14 @@ if 'crc.pitt.edu' in host:
                             inputFile.write('\tIdealGasRosenbluthWeight\t{0}\n'.format(componentIGRW[j]))
                             inputFile.write('\tTranslationProbability\t0.5\n')
                             inputFile.write('\tRotationProbability\t0.5\n')
-                            inputFile.write('\tReinsertionProbability\t0.0\n')
+                            inputFile.write('\tReinsertionProbability\t0.5\n')
                             inputFile.write('\tSwapProbability\t\t1.0\n')
                             inputFile.write('\tCreateNumberOfMolecules\t0\n\n')
                     else:
                         print('\nDo you want to manually specify the move probabilities? (y/n)')
                         override = 'A'
                         while (override != 'n' and override != 'y'):
-                            tempVAR = raw_input('')
+                            tempVAR = input('')
                             if tempVAR == 'y':
                                 override = 'y'
                                 print('\nEnter all values as decimals.\n')
@@ -337,7 +337,7 @@ if 'crc.pitt.edu' in host:
                                     inputFile.write('\tMoleculeDefinition\tTraPPE\n')
                                     molFrac = -1
                                     while molFrac == -1:
-                                        tempProb = raw_input('\nMol Fraction for {0}:\n'.format(component))
+                                        tempProb = input('\nMol Fraction for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 molFrac = float(tempProb.replace(" ",""))
@@ -347,7 +347,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     translateProb = -1
                                     while translateProb == -1:
-                                        tempProb = raw_input('\nTranslation probability for {0}:\n'.format(component))
+                                        tempProb = input('\nTranslation probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 translateProb = float(tempProb.replace(" ",""))
@@ -357,7 +357,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     rotationProb = -1
                                     while rotationProb == -1:
-                                        tempProb = raw_input('\nRotation probability for {0}:\n'.format(component))
+                                        tempProb = input('\nRotation probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 rotationProb = float(tempProb.replace(" ",""))
@@ -367,7 +367,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     reinsertionProb = -1
                                     while reinsertionProb == -1:
-                                        tempProb = raw_input('\nReinsertion probability for {0}:\n'.format(component))
+                                        tempProb = input('\nReinsertion probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 reinsertionProb = float(tempProb.replace(" ",""))
@@ -377,7 +377,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     swapProb = -1
                                     while swapProb == -1:
-                                        tempProb = raw_input('\nSwap probability for {0}:\n'.format(component))
+                                        tempProb = input('\nSwap probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 swapProb = float(tempProb.replace(" ",""))
@@ -387,7 +387,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     cbmcProb = -1
                                     while cbmcProb == -1:
-                                        tempProb = raw_input('\nCBMC probability for {0}:\n'.format(component))
+                                        tempProb = input('\nCBMC probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 cbmcProb = float(tempProb.replace(" ",""))
@@ -397,7 +397,7 @@ if 'crc.pitt.edu' in host:
                                             print('\nInvalid entry. Try again.\n')
                                     cfmcProb = -1
                                     while cfmcProb == -1:
-                                        tempProb = raw_input('\nCF Swap Lambda probability for {0}:\n'.format(component))
+                                        tempProb = input('\nCF Swap Lambda probability for {0}:\n'.format(component))
                                         try:
                                             if isinstance(float(tempProb), float):
                                                 cfmcProb = float(tempProb.replace(" ",""))
@@ -442,7 +442,7 @@ if 'crc.pitt.edu' in host:
                 jobfile.write('#SBATCH --output="{0}.out"\n'.format(cif.rsplit("_",1)[0]+'_'+mol+str(temp).split('.',1)[0]+'K_'+appString+'_'+str(pressure)+'mbar'))
             jobfile.write('#SBATCH --nodes=1\n')
             jobfile.write('#SBATCH --cluster=smp\n')
-            jobfile.write('#SBATCH --partition=legacy\n')
+            jobfile.write('#SBATCH --partition=smp\n')
             jobfile.write('#SBATCH --ntasks-per-node=1\n')
             jobfile.write('#SBATCH --time=6-00:00:00\n')
             jobfile.write('#SBATCH --qos=long\n\n')
